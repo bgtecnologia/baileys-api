@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+    baileys-db:
+        image: mariadb:latest
+        container_name: baileys-db
+        environment:
+            MYSQL_ROOT_PASSWORD: bg8103
+            MYSQL_DATABASE: baileys
+            character-set-server: "utf8"
+            TZ: "America/Sao_Paulo"
+        volumes:
+            - ./mariadb-data:/var/lib/mysql
+            - ./mariadb-backups:/backups
+        ports:
+            - "3306:3306"
+        networks:
+            - wpp-net
+        restart: always
+    baileys-api:
+      container_name: baileys-api
+      build:
+          context: .
+          dockerfile: ./docker/Dockerfile.dev
+      volumes:
+          - .:/app
+      ports:
+          - "8895:3000"
+      environment:
+          BOT_NAME: TiroDigital
+          DATABASE_URL: mysql://root:bg8103@baileys-db:3306/baileys
+          API_KEY: tLYsW4NWkG5MwzcDGKSVWmdk1rIfhWSK
+          URL_WEBHOOK: http://intra.bgtecnologia.com.br:8895/webhook
+      depends_on:
+          - baileys-db
+      networks:
+          - wpp-net
+volumes:
+    prisma:
+networks:
+    wpp-net:
+        driver: bridge

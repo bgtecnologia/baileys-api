@@ -6,3 +6,5 @@ prisma/migrations/
 *.tgz
 *.log
 tsconfig.tsbuildinfo
+
+mariadb-*

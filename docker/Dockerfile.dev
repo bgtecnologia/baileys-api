@@ -2,16 +2,30 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json .
+# Adicionar dependências do sistema necessárias para o Prisma
+RUN apk add --no-cache \
+    openssl \
+    libc6-compat \
+    libstdc++ \
+    bash
 
+# Copiar os arquivos do projeto
+COPY package*.json ./
+
+# Instalar dependências do Node.js
 RUN npm install --quiet
 
-RUN npx prisma migrate
+# Copiar o esquema do Prisma
+COPY prisma ./prisma
 
+# Gerar o Prisma Client para o ambiente correto
+RUN npx prisma generate
+
+# Copiar o restante do código da aplicação
 COPY . .
 
+# Expor a porta do servidor
 EXPOSE 3000
 
-CMD [ "npm", "run", "dev" ]
-
-
+# Executar migrações e iniciar o servidor
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run dev"]
