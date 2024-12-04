@@ -8,3 +8,5 @@ prisma/migrations/
 tsconfig.tsbuildinfo
 
 mariadb-*
+
+docker-compose.yml
