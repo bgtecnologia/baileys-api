@@ -41,3 +41,12 @@ export const del: RequestHandler = async (req, res) => {
 	await WhatsappService.deleteSession(req.params.sessionId);
 	res.status(200).json({ message: "Session deleted" });
 };
+
+export const presence: RequestHandler = async (req, res) => {
+	const { sessionId } = req.params;
+	const { presence } = req.body;
+
+	const session = WhatsappService.getSession(sessionId)!;
+	await session.sendPresenceUpdate(presence);
+	res.status(200).json({ message: "Presence updated" });
+};
